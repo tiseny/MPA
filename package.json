@@ -25,7 +25,8 @@
     "webpack-dev-server": "^1.14.1",
     "gulp": "^3.8.10",
     "gulp-file-include": "0.13.7",
-    "mockjs": "^1.0.0"
+    "mockjs": "^1.0.0",
+    "art-template": "^3.0.3"
   },
   "dependencies": {}
 }

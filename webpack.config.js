@@ -66,7 +66,7 @@ module.exports = {
             //这里是去除错误提示的配置
             compress: {
                 warnings: false,
-                drop_console: true,
+                /*drop_console: true,*/
                 dead_code: true
             },
             minimize: true
@@ -75,7 +75,8 @@ module.exports = {
             'process.env': {
                 'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
             }
-        })
+        }),
+        new webpack.HotModuleReplacementPlugin()
     ]
 }
 
