@@ -13,8 +13,13 @@ less
 ```
 npm i
 ```
+###开发运行
 
-###开发运行 (Mac)
+```
+npm run dev
+```
+
+###发布运行 (Mac)
 
 ```
 npm run build
