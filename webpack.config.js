@@ -54,7 +54,7 @@ const CFG = {
                 loader: 'babel-loader?presets[]=es2015'
             }, {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style', 'css')
+                loader: ExtractTextPlugin.extract('exports-loader?module.exports.toString()', 'css-loader')
             }, {
                 test: /\.less$/,
                 loader: ExtractTextPlugin.extract('css!less')
@@ -63,7 +63,7 @@ const CFG = {
                 loader: 'file-loader?name=fonts/[name].[ext]'
             }, {
                 test: /\.(png|jpe?g|gif)$/,
-                loader: 'url-loader?limit=1024&name=images/[name]-[hash].[ext]'
+                loader: 'url-loader?limit=1024&name=images/[name].[ext]?[hash]'
             }
         ]
     },
@@ -102,6 +102,7 @@ if (IS_PROD) {
             }
         }),
         new CopyWebpackPlugin([
+            { from: CONFIG.devPath + 'images', to: 'images', toType: 'dir' },
             { from: CONFIG.devPath + 'fonts', to: 'fonts', toType: 'dir' }
         ])
     );
