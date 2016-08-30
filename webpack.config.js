@@ -1,126 +1,163 @@
-var path = require('path');
-var webpack = require('webpack');
-var config = require('./config');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var glob = require('glob');
+const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin'); //提取单独的css
+const HtmlWebpackPlugin = require('html-webpack-plugin'); //webpack中生成HTML的插件
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-var entries = getEntry('./dev/js/*.js'); // 获得入口js文件
+// 相关配置
+const CONFIG = require('./config');
+// 判断是否为生产环境
+const IS_PROD = process.env.PRODUCTION == 'production';
 
-// 公共模块的 路径
-var commons = [
-    './dev/js/libs/jquery.min-1.9.1.js',
-    './dev/js/libs/bootstrap.min.js'
-]
+//获取entry
+const entries = function() {
+    var entry = {};
+    getEntry(CONFIG.devPath + 'js/', function(list) {
+        for (var i = 0, item; item = list[i++];) {
+            entry[item[0].slice(0, -3)] = item[2];
+        }
+    });
+    return entry;
+}();
 
-module.exports = {
+const chunks = Object.keys(entries);
+const CFG = {
+    devtool: "cheap-module-eval-source-map",
     devServer: {
-        outputPath: path.join(__dirname, config.distPath)
-    },
-    entry: Object.assign(entries, { commons }),
-    output: {
-        path: path.resolve(__dirname, config.distPath),
-        publicPath: './../' + config.distPath ,
-        filename: 'js/[hash:8].[name].js'
-    },
-    //devtool: 'source-map',
-    module: {
-        loaders: [{
-            test: /\.js?$/,
-            //排除目录,exclude后将不匹配
-            exclude: /node_modules/,
-            loader: 'babel-loader?presets[]=es2015'
-        }, {
-            test: /\.css$/,
-            loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
-        }, {
-            test: /\.less$/,
-            loader: ExtractTextPlugin.extract('css!less')
-        }, {
-            test: /\.json$/,
-            loader: 'json'
-        }, { 
-            test:/\.(swf|ico|gif|jpe|png|woff|svg|ttf|eot?)(\?.*)$/, //限制大小小于10k的 图片和字体. 生成base64编码
-            loader:'url-loader?limit=10000'
-        }]
-    },
-    resolve: {
-        alias: {
-            //jquery: path.join(__dirname, 'src/js/libs/jquery1.8.3')
+        outputPath: path.join(__dirname, CONFIG.distPath),
+        contentBase: CONFIG.devPath,
+        publicPath: CONFIG.publicPath,
+        proxy: {
+            "*": CONFIG.proxyPath //开发的时候接口转发
+        },
+        inline: true,
+        hot: true,
+        stats: {
+            cached: false,
+            colors: true
         }
     },
-    plugins: [
-        new ExtractTextPlugin('css/[contenthash:8].[name].css', {
-            //allChunks: true
-        }),
-        new CopyWebpackPlugin([
-            { from: config.devPath + '/js/libs', to: 'js/libs', toType: 'dir' },
-            { from: config.devPath + '/css/bootstrap.min.css', to: 'css/bootstrap.min.css', toType: 'file' },
-            { from: config.devPath + '/img', to: 'img', toType: 'dir'},
-            { from: config.devPath + '/fonts', to: 'fonts', toType: 'dir' },
-            { from: config.devPath + '/video', to: 'video', toType: 'dir' }
-        ]),
-        //以下代码为压缩代码插件,在打包的时候用,开发环境下会减慢编译速度
-        new webpack.optimize.UglifyJsPlugin({
-            //这里是去除错误提示的配置
-            compress: {
-                warnings: false,
-                /*drop_console: true,*/
-                dead_code: true
-            },
-            minimize: true
-        }),
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    entry: entries,
+    output: {
+        path: CONFIG.distPath,
+        publicPath: '',
+        filename: 'js/[hash:8].[name].js', // 最后的链接就是  publicPath + filename的结果  比如 ""./js/vendors.js?8ea677fd05e1a89a1235""
+        chunkFilename: 'js/[id].chunk.js' // 最后的链接就是  publicPath + chunkFilename的结果
+    },
+    module: {
+        loaders: [ //加载器
+            {
+                test: /\.js?$/,
+                //排除目录,exclude后将不匹配
+                exclude: /node_modules/,
+                loader: 'babel-loader?presets[]=es2015'
+            }, {
+                test: /\.css$/,
+                loader: ExtractTextPlugin.extract('style', 'css')
+            }, {
+                test: /\.less$/,
+                loader: ExtractTextPlugin.extract('css!less')
+            }, {
+                test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'file-loader?name=fonts/[name].[ext]'
+            }, {
+                test: /\.(png|jpe?g|gif)$/,
+                loader: 'url-loader?limit=1024&name=images/[name]-[hash].[ext]'
             }
+        ]
+    },
+    plugins: [
+        new webpack.ProvidePlugin({ //载入jq,这样就不用每个里面都require了，直接使用  $
+            $: 'jquery'
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendors', // 将公共模块提取，生成名为`vendors`的chunk
+            chunks: chunks, //chunks 看起来就是这样 ["a", "b", "index"],
+            minChunks: chunks.length // 提取所有entry共同依赖的模块 ， 这里 chunks.length的意思是 比如每个页面里面都使用了$的时候 jQuery才会被打包到 vendos.js里面。
+        }),
+        new ExtractTextPlugin('css/[hash:8].[name].css'), //单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+        new webpack.HotModuleReplacementPlugin(), //热加载
     ]
 }
 
-function getEntry(globPath) {
-    var entries = {},
-        basename, tmp, pathname;
+module.exports = CFG;
 
-    glob.sync(globPath).forEach(function(entry) {
-        basename = path.basename(entry, path.extname(entry));
-        tmp = entry.split('/').splice(-3);
-        pathname = tmp.splice(0, 1) + '/' + basename; // 正确输出js和html的路径
-        /*entries[pathname] = entry;*/
-        entries[basename] = entry;
-    });
-    
-    return entries;
+
+//如果是生产环境，则开启压缩 + copy 对应的文件 
+if (IS_PROD) {
+    // 删除  dist目录
+    deleteFolderRecursive(CONFIG.distPath);
+
+    CFG.plugins.push(
+        new webpack.optimize.UglifyJsPlugin({ //压缩代码
+            compress: {
+                warnings: false,
+                drop_console: true,
+                dead_code: true
+            },
+            minimize: true,
+            mangle: {
+                except: ['$super', '$', 'exports', 'require'] //排除关键字
+            }
+        }),
+        new CopyWebpackPlugin([
+            { from: CONFIG.devPath + 'fonts', to: 'fonts', toType: 'dir' }
+        ])
+    );
 }
 
-var pages = getEntry('./dist/*.html');
 
-module.exports.plugins.push(
-    // 提取公共模块， jquery + bootstarp
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['commons'],
-      minChunks: Infinity
-    })
-)
-
-for (var pathname in pages) {
-    // 配置生成的html文件，定义路径等
-    var conf = {
-        filename: pathname + '.html',
-        template: pages[pathname], // 模板路径
-        minify: {
-          removeComments: true, // 是否移除注释
-          collapseWhitespace: true // 是否移除空白
+//为每个页面配置html
+getEntry('./src/', function(list) {
+    for (var i = 0, item; item = list[i++];) {
+        if (item[0].slice(-5) == '.html') {
+            var name = item[0].slice(0, -5);
+            CFG.plugins.push(new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
+                favicon: CONFIG.devPath + 'images/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+                filename: name + '.html', //生成的html存放路径，相对于path
+                template: CONFIG.devPath + name + '.html', //html模板路径
+                inject: true, //js插入的位置，true/'head'/'body'/false
+                hash: true, //为静态资源生成hash值
+                chunks: ['vendors', name], //需要引入的chunk，不配置就会引入所有页面的资源
+                minify: { //压缩HTML文件
+                    removeComments: true, //移除HTML中的注释
+                    collapseWhitespace: true, //删除空白符与换行符
+                    ignoreCustomFragments: [
+                        /\{\{[\s\S]*?\}\}/g //不处理 {{}} 里面的 内容
+                    ]
+                }
+            }));
         }
     }
-    if (pathname in module.exports.entry) {
-        conf.chunks = ['commons',pathname];  // 注入页面的js 为公共提取模块和相对应的 js 
-        conf.hash = false;
-    }
-    // 需要生成几个html文件，就配置几个HtmlWebpackPlugin对象
-    module.exports.plugins.push(new HtmlWebpackPlugin(conf));
+});
+
+
+//循环文件夹内的文件
+function getEntry(path, cb) {
+    var folder_exists = fs.existsSync(path);
+    var fileList = [];
+    if (folder_exists == true) {
+        var dirList = fs.readdirSync(path);
+        dirList.forEach(function(fileName) {
+            fileList.push([fileName, path, path + fileName]);
+        });
+    };
+    return cb(fileList);
 }
-
-
+//删除文件夹 ，递归删除
+function deleteFolderRecursive(path) {
+    var files = [];
+    if (fs.existsSync(path)) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file, index) {
+            var curPath = path + "/" + file;
+            if (fs.statSync(curPath).isDirectory()) { // recurse 查看文件是否是文件夹
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};

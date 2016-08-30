@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%= require('html!./template/meta.inc')%>
+    <title>index</title>
+</head>
+<body>
+    <h1>index</h1>
+    <a href="index.html">index</a>
+    <a href="a.html">aaaa</a>
+    <a href="b.html">bbbb</a>
+    <div class="row" id="row"></div>
+    <script id="tpl" type="text/html">
+        {{each list as value i}}
+        <div class="col-md-4">
+            <h2>{{value.title}}</h2>
+            <p>{{value.details}}</p>
+            <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+        </div>
+        {{/each}}
+    </script>
+    <img src="<%= require('./images/index.png') %>">
+    <%= require('html!./template/parital.inc')%>
+</body>
+</html>
