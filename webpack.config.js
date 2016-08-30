@@ -103,7 +103,8 @@ if (IS_PROD) {
         }),
         new CopyWebpackPlugin([
             { from: CONFIG.devPath + 'images', to: 'images', toType: 'dir' },
-            { from: CONFIG.devPath + 'fonts', to: 'fonts', toType: 'dir' }
+            { from: CONFIG.devPath + 'fonts', to: 'fonts', toType: 'dir' },
+            { from: CONFIG.devPath + 'run/server.js', to: 'server.js', toType: 'file' }
         ])
     );
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack-dev-server --progress --profile --colors",
     "build": "export PRODUCTION=production&& webpack --progress --hide-modules",
-    "buildCmd": "set PRODUCTION=production&& webpack --progress --hide-modules"
+    "buildCmd": "set PRODUCTION=production&& webpack --progress --hide-modules && npm run server",
+    "server": "node dist/server.js"
   },
   "author": "jzq",
   "license": "ISC",
