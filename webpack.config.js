@@ -23,17 +23,15 @@ const entries = function() {
 
 const chunks = Object.keys(entries);
 const CFG = {
-    devtool: "cheap-module-eval-source-map",
+    // 调试时显示源文件代码映射
     devServer: {
         outputPath: path.join(__dirname, CONFIG.distPath),
         contentBase: CONFIG.devPath,
         publicPath: CONFIG.publicPath,
-        proxy: {
-            "*": CONFIG.proxyPath //开发的时候接口转发
-        },
-        inline: true,
+        
+        inline: true,   // 将JS注入到 body 或 head
         hot: true,
-        stats: {
+        stats: {        // node 编译时的提示
             cached: false,
             colors: true
         }
@@ -76,64 +74,9 @@ const CFG = {
             chunks: chunks, //chunks 看起来就是这样 ["a", "b", "index"],
             minChunks: chunks.length // 提取所有entry共同依赖的模块 ， 这里 chunks.length的意思是 比如每个页面里面都使用了$的时候 jQuery才会被打包到 vendos.js里面。
         }),
-        new ExtractTextPlugin('css/[hash:8].[name].css'), //单独使用link标签加载css并设置路径，相对于output配置中的publickPath
-        new webpack.HotModuleReplacementPlugin(), //热加载
+        new ExtractTextPlugin('css/[hash:8].[name].css') //单独使用link标签加载css并设置路径，相对于output配置中的publickPath
     ]
 }
-
-module.exports = CFG;
-
-
-//如果是生产环境，则开启压缩 + copy 对应的文件 
-if (IS_PROD) {
-    // 删除  dist目录
-    deleteFolderRecursive(CONFIG.distPath);
-
-    CFG.plugins.push(
-        new webpack.optimize.UglifyJsPlugin({ //压缩代码
-            compress: {
-                warnings: false,
-                drop_console: true,
-                dead_code: true
-            },
-            minimize: true,
-            mangle: {
-                except: ['$super', '$', 'exports', 'require'] //排除关键字
-            }
-        }),
-        new CopyWebpackPlugin([
-            { from: CONFIG.devPath + 'images', to: 'images', toType: 'dir' },
-            { from: CONFIG.devPath + 'fonts', to: 'fonts', toType: 'dir' },
-            { from: CONFIG.devPath + 'run/server.js', to: 'server.js', toType: 'file' }
-        ])
-    );
-}
-
-
-//为每个页面配置html
-getEntry('./src/', function(list) {
-    for (var i = 0, item; item = list[i++];) {
-        if (item[0].slice(-5) == '.html') {
-            var name = item[0].slice(0, -5);
-            CFG.plugins.push(new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
-                favicon: CONFIG.devPath + 'images/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
-                filename: name + '.html', //生成的html存放路径，相对于path
-                template: CONFIG.devPath + name + '.html', //html模板路径
-                inject: true, //js插入的位置，true/'head'/'body'/false
-                hash: true, //为静态资源生成hash值
-                chunks: ['vendors', name], //需要引入的chunk，不配置就会引入所有页面的资源
-                minify: { //压缩HTML文件
-                    removeComments: true, //移除HTML中的注释
-                    collapseWhitespace: true, //删除空白符与换行符
-                    ignoreCustomFragments: [
-                        /\{\{[\s\S]*?\}\}/g //不处理 {{}} 里面的 内容
-                    ]
-                }
-            }));
-        }
-    }
-});
-
 
 //循环文件夹内的文件
 function getEntry(path, cb) {
@@ -152,7 +95,7 @@ function deleteFolderRecursive(path) {
     var files = [];
     if (fs.existsSync(path)) {
         files = fs.readdirSync(path);
-        files.forEach(function(file, index) {
+        files && files.forEach(function(file, index) {
             var curPath = path + "/" + file;
             if (fs.statSync(curPath).isDirectory()) { // recurse 查看文件是否是文件夹
                 deleteFolderRecursive(curPath);
@@ -163,3 +106,64 @@ function deleteFolderRecursive(path) {
         fs.rmdirSync(path);
     }
 };
+
+//如果是生产环境，则开启压缩 + copy 对应的文件 
+if (IS_PROD) {
+    // 删除  dist目录
+    deleteFolderRecursive(CONFIG.distPath);
+    CFG.plugins.push(
+        new webpack.optimize.UglifyJsPlugin({ //压缩JS代码
+            output: {
+                comments: false,  // remove all comments
+            },
+            sourceMap: false,
+            minimize: true,
+            compress: {
+                drop_debugger: true,
+                warnings: false,
+                drop_console: true
+            },          // 压缩JS
+            mangle: {
+                except: ['$super', '$', 'exports', 'require'] //排除关键字
+            }
+        }),
+        new CopyWebpackPlugin([         // 复制文件夹到指定位置
+            { from: CONFIG.devPath + 'images', to: 'images', toType: 'dir' },
+            { from: CONFIG.devPath + 'fonts', to: 'fonts', toType: 'dir' },
+            { from: CONFIG.devPath + 'run/server.js', to: 'server.js', toType: 'file' }
+        ])
+    );
+} else {
+    CFG.devtool = "cheap-module-eval-source-map";
+    CFG.plugins.push(
+        new webpack.HotModuleReplacementPlugin() //热加载
+    )
+}
+
+
+//为每个页面配置html
+getEntry('./src/', function(list) {
+    for (var i = 0, item; item = list[i++];) {
+        if (item[0].slice(-5) == '.html') {
+            var name = item[0].slice(0, -5);
+            CFG.plugins.push(new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
+                favicon: CONFIG.devPath + 'images/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+                filename: name + '.html', //生成的html存放路径，相对于path
+                template: CONFIG.devPath + name + '.html', //html模板路径
+                inject: true, //js插入的位置，true 'head'/  'body' false
+                hash: true, //为静态资源生成hash值
+                chunks: ['vendors', name], //需要引入的chunk，不配置就会引入所有页面的资源
+                minify: { //压缩HTML文件
+                    removeComments: true, //移除HTML中的注释
+                    collapseWhitespace: true, //删除空白符与换行符
+                    ignoreCustomFragments: [
+                        /\{\{[\s\S]*?\}\}/g //不处理 {{}} 里面的 内容
+                    ]
+                }
+            }));
+        }
+    }
+});
+
+// 入口
+module.exports = CFG;
