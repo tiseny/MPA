@@ -1,0 +1,54 @@
+article{
+  position: relative;
+  margin: 30px;
+  padding: 20px 20px 40px 20px;
+  border: 1px solid #dedede;
+  background: #fff;
+  box-shadow: 2px 2px 10px #ddd;
+  border-radius: 4px;
+  font-family: "microsoft Yahei";
+  .close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    &:hover{
+      background: rgba(0,0,0,.3);
+    }
+    &:after{
+      transition: all 1s;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      content: '×';
+      font-size: 18px;
+    }
+    &:hover:after{
+      transform: rotate(360deg);  
+    }
+  }
+  .title{
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding-left: 10px;
+    &.brage{
+      text-align: left;
+      border-left: 5px solid #3089e4;
+    }
+  }
+  section{
+    font-size: 14px;
+    margin-top: 20px;
+    line-height: 20px;
+    text-indent: 30px;
+  }
+}

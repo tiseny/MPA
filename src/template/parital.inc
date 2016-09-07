@@ -1,1 +1,3 @@
-<h2>blablabla...</h2>
+<footer>  
+  copyright jzq.tiseny 
+</footer>
