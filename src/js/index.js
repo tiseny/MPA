@@ -1,6 +1,7 @@
 import '../css/index.less';
 import data from '../mock/header';
 import article from '../modules/article';
+import tab from '../modules/tab';
 
 const template = require('../libs/art-template');
 
@@ -12,7 +13,7 @@ $(function() {
   //   var html = template('tpl', data);
   //   $('#row').html(html);   
   // }) 
-  // 生成
+  // 文章
   article.init({
     container: $('#article'),
     data:{
@@ -24,6 +25,24 @@ $(function() {
         }
       ]
     }
+  }).on('remove',function(){
+    alert('remove');
+  }).on('exSkin',function(){
+    alert('exSkin');
   })
 
+  // tab
+  tab.init({
+    container: $('#tab'),
+    active: 0,
+    data: [{
+      title: 'tab-标题一',
+      content: '段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字'
+    },{
+      title: 'tab-标题二',
+      content: '段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字'
+    }]
+  }).on(['remove','exSkin','select'],function(item, opts){
+    alert(item)
+  })
 })

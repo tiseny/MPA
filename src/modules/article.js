@@ -5,6 +5,7 @@
 import './article.less';
 
 const article = {
+  themeClass: 'brage',
   defaultProps: {
     container: $('body'),
     data: {
@@ -23,9 +24,21 @@ const article = {
       ]
     }  
   },
+  eventsContainer : {}, // 事件回调容器
   // 初始化的时候，需要确认配置是否正确
   init: (options) => {
     article.createStructs(options ? options : article.defaultProps)
+
+    return article;
+  },
+  on: (events,cb) => {
+    switch (typeof events) {
+      case 'string' : article.eventsContainer[events] = cb; break;
+      case 'object' : Array.isArray(events) && events.forEach(item => {
+        article.eventsContainer[item] = cb;
+      }); break;
+    }
+    return article
   },
   // settings 组织结构
   createStructs: (opts) => {
@@ -38,7 +51,7 @@ const article = {
   // 注入相关内容
   inject: (data = data || article.defaultProps.data) => {
     let close_btn = "<span class='close'></span>";
-    let title = "<div class='title brage'>" + data.title + "</div>";
+    let title = "<div class='title'>" + data.title + "</div>";
     let sections = ""
     Array.isArray(data.sections) && data.sections.forEach(section => {
       // json 字符串去掉 ｛｝
@@ -52,14 +65,16 @@ const article = {
   },
   // 关闭按钮
   onEvents: (opts) => {
-    ['remove','dblclick'].forEach(item => {
+    ['remove','exSkin'].forEach(item => {
       switch(item) {
         case 'remove': return opts.container.on('click', 'article .close', function(e){
           e.stopPropagation();
           opts.container.remove();
+          article.eventsContainer[item](item,opts)
         });
-        case 'dblclick': return opts.container.on(item, function(){
-          console.log(212)
+        case 'exSkin': return opts.container.on('dblclick', function(){
+          $(this).find('article').toggleClass(article.themeClass);
+          article.eventsContainer[item](item,opts)
         });
       }
     })
