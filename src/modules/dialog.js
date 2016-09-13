@@ -3,18 +3,17 @@
  */
 
 import './dialog.less'
-
-
-
+import styleHelper from '../util/style';
 const dialog = {
+  id: new Date().getTime(),
   themeClass: 'brage',
   defaultProps: {
     container: $('body'), // 加载的容器
     style: {},
     title: '标题', // 标题
     content: null, // htmldom
-    footer: [{
-      text: '确定',
+    btns: [{
+      text: '确定', 
       style: {},
       onClick: () => {
         console.log('确定')
@@ -35,12 +34,13 @@ const dialog = {
   },
   // 生成结构
   createStructs: (opts) => {
-    opts.container.append("<div class='dialog'><div class='mask'></div><div class='main'>" + dialog.inject(opts) + "</div></tab>")
+
+    opts.container.append("<div class='dialog' id=" + dialog.id + "><div class='dialog-wrapper'><div class='mask'></div><div class='main fadeInDown'>" + dialog.inject(opts) + "</div></div></div>")
 
     // 事件绑定
     dialog.onEvents(opts)
   },
-  on: (events,cb) => {
+  /*on: (events,cb) => {
     switch (typeof events) {
       case 'string' : dialog.eventsContainer[events] = cb; break;
       case 'object' : Array.isArray(events) && events.forEach(item => {
@@ -48,50 +48,58 @@ const dialog = {
       }); break;
     }
     return dialog
-  },
+  },*/
   // inject 注入内容
   inject: (opts) => {
     // dialog header
     // dialog main
-    // dialog footer
+    // dialog btns
 
     const header = opts.title && opts.title.length > 0 
                   ? "<div class='header'>" + opts.title + "<span class='close'></span></div>"
                   : ""
-    const main = "<div class='main'>" + opts.html.html() + "<div>";
+    const main = "<div class='body'>" + opts.html + "</div>";
+    const btns = []
+    opts.btns && opts.btns.forEach(item => {
+      btns.push("<span class='btn' style=" + styleHelper(item.style) + ">" + item.text + "</span>")
+    })
 
-    return 
+    const footer = "<div class='footer'>" + btns.join('') + "</div>"
+    return header + main + footer
   },
-  // 刷新 tab
-  refresh: (opts) => {
-    opts.data.length > 0 ? opts.container.find('.tab').html(dialog.inject(opts.active,opts.data)) : opts.container.remove();
-  },
+
   // 绑定事件
   onEvents: (opts) => {
     // 1、移除  2、选中
-    ['remove','select','exSkin'].forEach(item => {
+    ['close'].forEach(item => {
       switch(item) {
-        case 'remove' : return opts.container.on('click','.head .close',function(e){
+        case 'close' : return $('#'+dialog.id).find('.header').on('click','.close',function(e){
           e.stopPropagation();
-          const index = $(this).closest('li').index()
-          opts.data.splice(index,1)
-          dialog.refresh(opts)
-          dialog.eventsContainer[item](item,opts)
+          dialog.on('close');
         });
-        case 'select' : return opts.container.on('click','li:not(.active)',function(e){
-          // 设置头部选中
-          $(this).addClass('active').siblings().removeClass('active')
-          // 设置切换的内容
-          opts.container.find('.content').text(opts.data[$(this).index()].content)
-          dialog.eventsContainer[item](item,opts)
-        });
-        case 'exSkin' : return opts.container.on('dblclick','.content',function(){
-          opts.container.find('.tab').toggleClass(dialog.themeClass);
-          dialog.eventsContainer[item](item,opts)
-        });
+       
       }
     })
-  }
+
+    opts.btns && opts.btns.forEach(item => {
+      $('#' + dialog.id).off('click').on('click','.footer .btn',function() {
+        const event = opts.btns[$(this).index()].onClick;
+        event ? event(dialog) : dialog.on('close');
+      })
+    })
+  },
+
+  // 对外的接口
+  on: (events) => {
+    ['close'].forEach(item => {
+      switch(item){
+        case 'close': return (function(){
+          $('#'+dialog.id).find('.main').addClass('fadeOutUp')
+          setTimeout(()=>{$('#'+dialog.id).remove()},600)
+        })();
+      }  
+    })
+  },
 }
 
-export default tab
+export default dialog

@@ -1,0 +1,133 @@
+.dialog{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  .dialog-wrapper{
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .mask{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .3;
+  }
+  .main{
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    width: 300px;
+    height: 150px;
+    margin-left: -150px;
+    background: #fff;
+    box-shadow: 2px 2px 10px #666;
+    
+    /* -webkit-animation:rollIn 1s .2s ease both;
+    -moz-animation:rollIn 1s .2s ease both; */
+    .header{
+      position: relative;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 10px;
+      background: #3089e4;
+      color: #fff;
+      .close{
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+        &:hover{
+          background: rgba(0,0,0,.3);
+        }
+        &:after{
+          transition: transform 1s;
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 30px;
+          content: '×';
+          font-size: 18px;
+        }
+        &:hover:after{
+          transform: rotate(360deg);
+          color: #fff;
+        }
+      }
+    }
+    .body{
+      padding: 10px;
+    }
+    .footer{
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      height: 30px;
+      line-height: 30px;
+      background: #f2f3f5;
+      border-top: 1px solid #efefef;
+      .btn{
+        line-height: 20px;
+        height: 20px;
+        display: inline-block;
+        margin: 0 5px;
+        font-size: 12px;
+        &:hover{
+          opacity: .8;
+        }
+      }
+    }
+  }
+}
+
+.fadeInDown{
+  -webkit-animation:fadeInDown 1s .2s ease both;
+  -moz-animation:fadeInDown 1s .2s ease both;
+}
+
+
+@-webkit-keyframes fadeInDown{
+  0%{opacity:0;-webkit-transform:translateY(-40px);}
+  100%{opacity:1;-webkit-transform:translateY(0);}
+}
+@-moz-keyframes fadeInDown{
+  0%{opacity:0;-moz-transform:translateY(-40px);}
+  100%{opacity:1;-moz-transform:translateY(0);}
+}
+
+@-webkit-keyframes rollIn{
+  0%{opacity:0;-webkit-transform:translateX(-100%) rotate(-120deg)}
+  100%{opacity:1;-webkit-transform:translateX(0px) rotate(0deg)}
+}
+@-moz-keyframes rollIn{
+  0%{opacity:0;-moz-transform:translateX(-100%) rotate(-120deg)}
+  100%{opacity:1;-moz-transform:translateX(0px) rotate(0deg)}
+}
+
+.fadeOutUp{
+  -webkit-animation:fadeOutUp .5s .1s ease both;
+  -moz-animation:fadeOutUp .5s .1s ease both;
+}
+@-webkit-keyframes fadeOutUp{
+  0%{opacity:1;-webkit-transform:translateY(0)}
+  100%{opacity:0;-webkit-transform:translateY(-20px)}
+}
+@-moz-keyframes fadeOutUp{
+  0%{opacity:1;-moz-transform:translateY(0)}
+  100%{opacity:0;-moz-transform:translateY(-20px)}
+}

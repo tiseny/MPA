@@ -2,6 +2,7 @@ import '../css/index.less';
 import data from '../mock/header';
 import article from '../modules/article';
 import tab from '../modules/tab';
+import dialog from '../modules/dialog';
 
 const template = require('../libs/art-template');
 
@@ -44,5 +45,23 @@ $(function() {
     }]
   }).on(['remove','exSkin','select'],function(item, opts){
     alert(item)
+  })
+
+  $('#dialog').on('click',function(){
+    dialog.init({
+      container: $('body'),
+      title: "弹窗标题",
+      html: $(this)[0].innerHTML,
+      btns: [{
+        text: '确定', 
+        style: {'background':'#0b6f2b'},
+        onClick: (ev) => {
+          ev.on('close')
+        }
+      },{
+        text: '取消', 
+        style: {'background':'#666'}
+      }]
+    })
   })
 })

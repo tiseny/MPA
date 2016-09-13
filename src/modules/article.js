@@ -3,7 +3,7 @@
  * @type {Object}
  */
 import './article.less';
-
+import styleHelper from '../util/style';
 const article = {
   themeClass: 'brage',
   defaultProps: {
@@ -55,10 +55,11 @@ const article = {
     let sections = ""
     Array.isArray(data.sections) && data.sections.forEach(section => {
       // json 字符串去掉 ｛｝
-      let style = section.style ? JSON.stringify(section.style) : ''
-      style = style.length > 0 ? style.substr(1,style.length - 2).replace(new RegExp('"',"gm"),'') : ''
       
-      sections += "<section style=" + style + ">" + section.text + "</section>"
+      /*let style = section.style ? JSON.stringify(section.style) : ''
+      style = style.length > 0 ? style.substr(1,style.length - 2).replace(new RegExp('"',"gm"),'') : ''*/
+      
+      sections += "<section style=" + styleHelper(section.style) + ">" + section.text + "</section>"
     })
 
     return close_btn + title + sections
