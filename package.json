@@ -1,5 +1,5 @@
 {
-  "name": "MPA",
+  "name": "hcya",
   "version": "1.0.0",
   "description": "webpack gulp es6 multiple",
   "main": "index.js",
@@ -25,9 +25,13 @@
     "less": "^2.7.0",
     "less-loader": "^2.2.3",
     "mockjs": "^1.0.0",
+    "echarts": "3.5.2",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "echarts": "^3.5.2"
   }
 }

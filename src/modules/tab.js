@@ -1,6 +1,16 @@
-/**
- *  tab -> 
- */
+/*tab.init({
+    container: $('#tab'),
+    active: 0,
+    data: [{
+      title: 'tab-标题一',
+      content: '段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字'
+    },{
+      title: 'tab-标题二',
+      content: '段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字'
+    }]
+  }).on(['remove','exSkin','select'],function(item, opts){
+    alert(item)
+  })*/
 
 import './tab.less'
 

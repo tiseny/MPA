@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%= require('html!./template/meta.inc')%>
+  <title>数据分析</title>
+</head>
+<body>
+  <%= require('html!./template/pageHeader.inc')%>
+  <div class="page-container">
+    <%= require('html!./template/slider.inc')%>
+    <div class="context-view-wrap">
+			<div class="context-wrap" id="analysis-page">
+		    <form class="form-inline">
+					<div class="row">
+						<div class="form-group">
+					    <label for="startDate">选择日期：</label>
+					    <input type="text" class="form-control datetimepicker" id="startDate"/>
+					  </div>
+					  <div class="form-group">
+					    <label for="endDate" style="margin: 0 5px;">至</label>
+					    <input type="text" class="form-control datetimepicker" id="endDate"/>
+					  </div>
+				
+				  	<div class="form-group" style="margin: 0 10px 0 30px;">
+					    <label for="category">数据类别：</label>
+					    <select class="form-control" id="category">
+							  <option>水位</option>
+							  <option>泥位</option>
+							</select>
+					  </div>
+					  <div class="form-group" style="margin-right: 10px;">
+					    <select class="form-control">
+							  <option>所有数据</option>
+							  <option>其他</option>
+							</select>
+					  </div>
+				  </div>
+				  
+				  <button type="submit" class="btn btn-primary pull-right">确定</button>
+				</form>
+				<div class="btn-group" role="group" id="group-btn">
+				  <button type="button" class="btn btn-primary">单井</button>
+				  <button type="button" class="btn btn-default">组井</button>
+				</div>
+				<div class="main-view">
+					<div class="left">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+						    <h3 class="panel-title">监测点</h3>
+						  </div>
+						  <div class="panel-body">
+						    <ul class="point-list" id="point-list">
+						    	<li class="">
+						    		<div class="title">龙华监测站点1</div>
+						    		<div class="info"><label>监测仪：</label> 2313313313</div>
+						    		<div class="info"><label>高度：</label> 233 cm</div>
+						    		<span class="glyphicon glyphicon-ok"></span>
+						    	</li>
+						    	<li>
+						    		<div class="title">龙华监测站点1</div>
+						    		<div class="info"><label>监测仪：</label> 2313313313</div>
+						    		<div class="info"><label>高度：</label> 233 cm</div>
+						    		<span class="glyphicon glyphicon-ok"></span>
+						    	</li>
+						    	<li>
+						    		<div class="title">龙华监测站点1</div>
+						    		<div class="info"><label>监测仪：</label> 2313313313</div>
+						    		<div class="info"><label>高度：</label> 233 cm</div>
+						    		<span class="glyphicon glyphicon-ok"></span>
+						    	</li>
+						    	<li>
+						    		<div class="title">龙华监测站点1</div>
+						    		<div class="info"><label>监测仪：</label> 2313313313</div>
+						    		<div class="info"><label>高度：</label> 233 cm</div>
+						    		<span class="glyphicon glyphicon-ok"></span>
+						    	</li>
+						    	<li>
+						    		<div class="title">龙华监测站点1</div>
+						    		<div class="info"><label>监测仪：</label> 2313313313</div>
+						    		<div class="info"><label>高度：</label> 233 cm</div>
+						    		<span class="glyphicon glyphicon-ok"></span>
+						    	</li>
+						    </ul>
+						  </div>
+						</div>
+					</div>
+					<div class="right">
+						<ul class="nav nav-tabs" id="view-tabs">
+							<li role="presentation" class="active"><a href="#">动画</a></li>
+						  <li role="presentation"><a href="#">曲线</a></li>
+						  <li role="presentation"><a href="#">表格</a></li>
+						</ul>
+						<div class="inner-view" id="inner-wrap">
+							<div class="animat-view view-item" >
+								<div id="canvas_container">
+									<canvas id="canvas">
+								    啊哦，你的浏览器不支持canvas. Sorry~
+									</canvas>
+								</div>
+							</div>
+							<div class="chart-view view-item" style="visibility: hidden;">
+								<div class="chart-view-wrap" id="chart-view-wrap"></div>
+							</div>
+							<div class="table-view view-item" style="visibility: hidden">
+								<table id="table"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+  </div>
+</body>
+</html>

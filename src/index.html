@@ -2,27 +2,17 @@
 <html lang="en">
 <head>
 	<%= require('html!./template/meta.inc')%>
-    <title>index</title>
+  <title>在线监测中心</title>
 </head>
 <body>
-    <h1>index</h1>
-    <a href="index.html">index</a>
-    <a href="a.html">aaaa</a>
-    <a href="b.html">bbbb</a>
-    <div class="row" id="row"></div>
-    <script id="tpl" type="text/html">
-        {{each list as value i}}
-        <div class="col-md-4">
-            <h2>{{value.title}}</h2>
-            <p>{{value.details}}</p>
-            <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
-        </div>
-        {{/each}}
-    </script>
-    <div id="article"></div>
-    <div id="tab"></div>
-    <section>
-        <button class="btn" id="dialog">dialog弹层</button>
-    </section>
+  <%= require('html!./template/pageHeader.inc')%>
+  <div class="page-container">
+    <%= require('html!./template/slider.inc')%>
+    <div class="context-view-wrap">
+			<div class="context-wrap">
+				
+			</div>
+    </div>
+  </div>
 </body>
 </html>

@@ -4,6 +4,7 @@ v1.4.1
 2010-03-01
 Author: Richard Clark - http://richclarkdesign.com
 */
+@import url('bootstrap.min.css');
 
 html, body, div, span, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -109,23 +110,38 @@ hr {
 input, select {
     vertical-align:middle;
 }
+.pagination-info{
+    line-height: 34px;
+    margin-right: 10px;
+}
+.clearfix{
+    height: 1px;
+    overflow: hidden;
+    display: block;
+    clear: both;
+    
+}
 
-.btn{
-  cursor: pointer;
-  background: #000;
-  color: #fff;
-  line-height: 30px;
-  height: 30px;
-  padding: 0 10px;
-  border: none;
-  box-shadow: 2px 2px 6px #999;
-  border-radius: 4px;
-  &:hover{
-    background: #333;
-  }
-  &:active{
-    position: relative;
-    margin-top: 1px;
-    box-shadow: inset 0px 0px 6px #eee;
-  }
+::-webkit-scrollbar {  
+  width: 16px;   
+}  
+  
+::-webkit-scrollbar-track,  
+::-webkit-scrollbar-thumb {  
+  border-radius: 999px;  
+  border: 5px solid transparent;  
+}  
+  
+::-webkit-scrollbar-track {  
+  box-shadow: 1px 1px 5px rgba(0,0,0,.2) inset;  
+}  
+  
+::-webkit-scrollbar-thumb {  
+  min-height: 20px;  
+  background-clip: content-box;  
+  box-shadow: 0 0 0 5px rgba(0,0,0,.2) inset;  
+}  
+  
+::-webkit-scrollbar-corner {  
+  background: transparent;  
 }

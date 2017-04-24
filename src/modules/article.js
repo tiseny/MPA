@@ -2,6 +2,24 @@
  * article 
  * @type {Object}
  */
+
+ /*article.init({
+    container: $('#article'),
+    data:{
+      title:'你好呀，李银河！',
+      sections: [{
+          text: '段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字'
+        },{
+          text: '段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字'
+        }
+      ]
+    }
+  }).on('remove',function(){
+    alert('remove');
+  }).on('exSkin',function(){
+    alert('exSkin');
+  })
+*/
 import './article.less';
 import styleHelper from '../util/style';
 const article = {

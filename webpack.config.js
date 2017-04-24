@@ -58,7 +58,7 @@ const CFG = {
                 loader: ExtractTextPlugin.extract('css!less')
             }, {
                 test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'file-loader?name=fonts/[name].[ext]'
+                loader: 'url-loader?name=fonts/[name].[ext]'
             }, {
                 test: /\.(png|jpe?g|gif)$/,
                 loader: 'url-loader?limit=1024&name=images/[name].[ext]?[hash]'
@@ -67,7 +67,9 @@ const CFG = {
     },
     plugins: [
         new webpack.ProvidePlugin({ //载入jq,这样就不用每个里面都require了，直接使用  $
-            $: 'jquery'
+            $: 'jquery',
+            jQuery:"jquery",
+            "window.jQuery":"jquery"
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendors', // 将公共模块提取，生成名为`vendors`的chunk
@@ -147,7 +149,7 @@ getEntry('./src/', function(list) {
         if (item[0].slice(-5) == '.html') {
             var name = item[0].slice(0, -5);
             CFG.plugins.push(new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
-                favicon: CONFIG.devPath + 'images/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+                /*favicon: CONFIG.devPath + 'images/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值*/
                 filename: name + '.html', //生成的html存放路径，相对于path
                 template: CONFIG.devPath + name + '.html', //html模板路径
                 inject: true, //js插入的位置，true 'head'/  'body' false

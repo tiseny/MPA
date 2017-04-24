@@ -1,6 +1,20 @@
-/**
- *  tab -> 
- */
+/*$('#dialog').on('click',function(){
+    dialog.init({
+      container: $('body'),
+      title: "弹窗标题",
+      html: $(this)[0].innerHTML,
+      btns: [{
+        text: '确定', 
+        style: {'background':'#0b6f2b'},
+        onClick: (ev) => {
+          ev.on('close')
+        }
+      },{
+        text: '取消', 
+        style: {'background':'#666'}
+      }]
+    })
+  })*/
 
 import './dialog.less'
 import styleHelper from '../util/style';
